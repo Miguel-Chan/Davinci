@@ -1,0 +1,22 @@
+{
+  "name": "davinci",
+  "version": "1.0.0",
+  "description": "A simple server of A web-based board game called Davinci.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.5.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-logger": "^3.2.0",
+    "koa-mount": "^3.0.0",
+    "koa-static": "^5.0.0",
+    "koa-views": "^6.1.4",
+    "path": "^0.12.7",
+    "pug": "^2.0.3",
+    "websocket": "^1.0.26"
+  }
+}
