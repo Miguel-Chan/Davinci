@@ -6,6 +6,7 @@ const bodyParser = require('koa-bodyparser');
 const mount = require('koa-mount');
 const logger = require('koa-logger');
 const kView = require('koa-views');
+const sessionControl = require('./Controller/sessionControl');
 
 const app = new Koa();
 let server = app.listen(18623);
@@ -17,7 +18,7 @@ staticKoa.use(kStatic(
     path.join(__dirname, './static')
 ))
 app.use(kView('view', {
-    root: __dirname + '/View',
+    root: __dirname + '/view',
     default: 'app',
     extension: 'pug'
 }));
@@ -34,18 +35,29 @@ let wsServer = new websocketServer({
     httpServer: server,
     autoAcceptConnections: false
 });
+let wsReqCount = 0;
+
+function sendBack(conn, data) {
+    console.log(data);
+    conn.send(data);
+}
 
 wsServer.on('request', function(request) {
     console.log(new Date() + ' Connection accepted.');
     let conn = request.accept();
 
     conn.on('message', async function(data) {
+        wsReqCount++;
         let str = data.utf8Data;
-        console.log(conn.user + ": " + str);
+        console.log(wsReqCount + ": " + str);
         let instructions = str.split('&&');
-        console.log(instructions);
+        console.log(`${conn.user}: ${instructions}`);
         switch(instructions[0].toLocaleLowerCase()) {
-
+            //getNewRoom
+            case 'getnewroom':
+                let newRoomID = sessionControl.createNewRoom();
+                //newRoomNum||{roomID}
+                sendBack(conn, `newRoomNum||${newRoomID}`);
         }
     })
 })

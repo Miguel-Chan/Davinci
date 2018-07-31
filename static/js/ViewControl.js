@@ -1,12 +1,7 @@
+let WsControl;
 $(document).ready(function() {
-
+    WsControl = new DavinciWsController();
 })
-
-const STATES = {
-    READY = 0,
-    PLAYING = 1,
-    ENDED = 2
-};
 
 class RoomInfo {
     constructor(id, players, state) {
@@ -16,15 +11,37 @@ class RoomInfo {
     }
 }
 
-let initialVue = new initialVue({
+let initialVue = new Vue({
     el: '#choosing-ground',
     data: {
         room: "",
-        usre: "",
+        user: "",
         roomsList: [],
         waiting: true
     },
     methods: {
-        
+        sendNewRoomRequest() {
+            WsControl.getNewRoomNum();
+        },
+        setNewRoomNumber(newNum) {
+            room = newNum;
+        }
     }
 })
+
+let gameVue = new Vue ({
+    el: '#game-area',
+    data: {
+        gaming: false
+    }
+})
+
+function startGame() {
+    initialVue.waiting = false;
+    gameVue.gaming = true;
+}
+
+function endGame() {
+    initialVue.waiting = true;
+    gameVue.gaming = false;
+}

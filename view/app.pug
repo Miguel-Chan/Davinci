@@ -1,0 +1,48 @@
+doctype html
+html(lang='en')
+  head
+    link(href='static/css/bootstrap.min.css',rel='stylesheet')
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(http-equiv="Cache-Control", content="no-cache, must-revalidate")
+    link(href='static/css/index.css',rel='stylesheet')
+    script(src='static/js/jquery.min.js')
+    script(src='static/js/bootstrap.min.js')
+    script(src='static/js/bootbox.min.js')
+    script(src='static/js/vue.js')
+    title Davinci's Code
+
+  body
+    div(id='choosing-ground', v-if='waiting')
+      h1.logo-name Davinci
+      .info-area(style='padding: 5% 30% 5% 30%;')
+        .input-group
+          span.input-group-addon.btn.btn-info
+            a.dropdown-toggle(data-toggle='dropdown')
+              span.glyphicon.glyphicon-user.dropdown
+              ul.dropdown-menu
+                li
+                  a(href='#') adfs
+          input.form-control.button(type='text', placeholder='Name', v-model='user')
+          span.input-group-addon @
+          input.form-control.button(type='text', placeholder='Room Number', v-model='room')
+          span.btn.btn-info.input-group-addon
+            a.dropdown-toggle(data-toggle='dropdown')
+              span.glyphicon.glyphicon-list
+            ul.dropdown-menu.pull-right
+              li
+                a(href='#') adfs
+              li.divider
+              li 
+                a(v-on:click='sendNewRoomRequest') Create a New Room
+      .btn-area
+        button.btn.btn-success.btn-lg(type='button') Join Room
+        button.btn.btn-primary.btn-lg(type='button') New Room
+
+    div(id='game-area' v-if='gaming')
+      h1.logo-name.in-game Davinci
+
+    script(src='static/js/wsControl.js')
+    script(src='static/js/GameControl.js')
+    script(src='static/js/ViewControl.js')
+      
