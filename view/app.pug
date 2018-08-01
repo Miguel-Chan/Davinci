@@ -6,7 +6,9 @@ html(lang='en')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     meta(http-equiv="Cache-Control", content="no-cache, must-revalidate")
     link(href='static/css/index.css',rel='stylesheet')
+    link(rel='stylesheet', href='static/fontawesome/css/all.css')
     script(src='static/js/jquery.min.js')
+    script(src='static/js/popper.min.js')
     script(src='static/js/bootstrap.min.js')
     script(src='static/js/bootbox.min.js')
     script(src='static/js/vue.js')
@@ -17,24 +19,21 @@ html(lang='en')
       h1.logo-name Davinci
       .info-area(style='padding: 5% 30% 5% 30%;')
         .input-group
-          span.input-group-addon.btn.btn-info
-            a.dropdown-toggle(data-toggle='dropdown')
-              span.glyphicon.glyphicon-user.dropdown
-              ul.dropdown-menu
-                li
-                  a(href='#') adfs
+          span.input-group-prepend.dropdown
+            button.btn.btn-primary.dropdown-toggle(data-toggle='dropdown')
+              span.fa.fa-user-plus
+            .dropdown-menu
+              a.dropdown-item(href='#') adfs
           input.form-control.button(type='text', placeholder='Name', v-model='user')
-          span.input-group-addon @
+          span.input-group-text @
           input.form-control.button(type='text', placeholder='Room Number', v-model='room')
-          span.btn.btn-info.input-group-addon
-            a.dropdown-toggle(data-toggle='dropdown')
-              span.glyphicon.glyphicon-list
-            ul.dropdown-menu.pull-right
-              li
-                a(href='#') adfs
-              li.divider
-              li 
-                a(v-on:click='sendNewRoomRequest') Create a New Room
+          span.input-group-append.dropdown
+            button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+              span.fa.fa-list
+            .dropdown-menu.pull-right
+              a.dropdown-item(href='#') adfs
+              .dropdown-divider
+              a.dropdown-item(v-on:click='sendNewRoomRequest', href='#') Create a New Room
       .btn-area
         button.btn.btn-success.btn-lg(type='button', v-on:click='joinRoom') Join Room
         button.btn.btn-primary.btn-lg(type='button') New Room
@@ -42,13 +41,15 @@ html(lang='en')
     div(id='game-area' v-if='gaming')
       h1.logo-name.in-game Davinci
       div(id='opponent-area')
-        div.list-group-item(v-for='oppo in opponents')
+        div.list-group-item.oppo-list(v-for='oppo in opponents')
           .opponent-info-box
-            span.glyphicon.glyphicon-user.opponent-icon
+            span.fa.fa-user-circle
             p {{ oppo.name }}
-          .oppo-card-box
-            .card-btn(v-for='card in oppo.card')
-              button.btn.btn-light {{ card.num }}
+          .opponent-card-box
+            .card-btn-area(v-for='card in oppo.card')
+              button.btn.card-btn(v-bind:class="card.toBootstrapClass()") {{ card.covered ? '<' : card.num }}
+          .player-card-box
+            
 
     script(src='static/js/wsControl.js')
     script(src='static/js/GameControl.js')

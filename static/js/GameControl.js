@@ -4,11 +4,20 @@ const STATES = {
     ENDED: 2
 };
 
+const COLOR = {
+    BLACK: "dark",
+    WHITE: "light"
+}
+
+
 class Card {
     constructor(num, color) {
         this.num = num;
         this.color = color;
         this.covered = true;
+    }
+    toBootstrapClass() {
+        return 'btn-' + this.color;
     }
 }
 
@@ -17,9 +26,10 @@ class User {
         this.name = name;
         this.card = [];
         for (let i = 0; i < 5; i++) {
-            this.card.push(new Card(i, 'white'));
-            this.card.push(new Card(i + 9, 'black'));
+            this.card.push(new Card(i, COLOR.BLACK));
+            this.card.push(new Card(i + 9, COLOR.WHITE));
         }
+        this.card[2].covered = false;
     }
 }
 
