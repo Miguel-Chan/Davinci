@@ -10,10 +10,10 @@ class DavinciWsController {
     constructor() {
         this.connection = new WebSocket(getWsPrefix() + window.location.host);
         this.connection.onclose = function() {
-            bootbox.alert("Coonection Lost! Please reconnect by flashing the page.");
+            bootbox.alert("Connection Lost! Please reconnect by flashing the page.");
         }
         this.connection.onerror = function() {
-            bootbox.alert("Coonection Error! Please reconnect by flashing the page.");
+            bootbox.alert("Connection Error! Please reconnect by flashing the page.");
         }
         this.connection.onmessage = function(recData) {
             let msg = recData.data;

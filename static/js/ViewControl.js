@@ -24,7 +24,7 @@ let initialVue = new Vue({
             WsControl.getNewRoomNum();
         },
         setNewRoomNumber(newNum) {
-            room = newNum;
+            this.room = newNum;
         }
     }
 })

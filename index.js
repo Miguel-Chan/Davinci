@@ -49,7 +49,7 @@ wsServer.on('request', function(request) {
     conn.on('message', async function(data) {
         wsReqCount++;
         let str = data.utf8Data;
-        console.log(wsReqCount + ": " + str);
+        console.log("ws Request " + wsReqCount + ": " + str);
         let instructions = str.split('&&');
         console.log(`${conn.user}: ${instructions}`);
         switch(instructions[0].toLocaleLowerCase()) {
