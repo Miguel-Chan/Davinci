@@ -21,4 +21,16 @@ body {
 .btn-area > * {
     margin: 10px;
 }
-
+#opponent-area {
+    padding: 3% 23% 3% 23%;
+}
+.opponent-info-box {
+    border: 2px solid grey;
+    width: 10%;
+    text-align: center;
+}
+.opponent-card-box {
+    border: 2px solid blue;
+    text-align: center;
+    display: inline;
+}

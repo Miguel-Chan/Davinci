@@ -25,6 +25,19 @@ let initialVue = new Vue({
         },
         setNewRoomNumber(newNum) {
             this.room = newNum;
+        },
+        joinRoom() {
+            if (this.user.length === 0 || this.user.indexOf('&') !== -1) {
+                bootbox.alert('Please enter a valid username!');
+                return;
+            }
+            if (this.room.length === 0 || this.room.indexOf('&') !== -1) {
+                bootbox.alert('Room number is invalid!');
+                return;
+            }
+            //TODO: Check if the room exists.
+
+            startGame();
         }
     }
 })
@@ -32,7 +45,8 @@ let initialVue = new Vue({
 let gameVue = new Vue ({
     el: '#game-area',
     data: {
-        gaming: false
+        gaming: false,
+        opponents: [new User('asd'), new User('123'), new User('ooo')]
     }
 })
 

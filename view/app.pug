@@ -36,11 +36,19 @@ html(lang='en')
               li 
                 a(v-on:click='sendNewRoomRequest') Create a New Room
       .btn-area
-        button.btn.btn-success.btn-lg(type='button') Join Room
+        button.btn.btn-success.btn-lg(type='button', v-on:click='joinRoom') Join Room
         button.btn.btn-primary.btn-lg(type='button') New Room
 
     div(id='game-area' v-if='gaming')
       h1.logo-name.in-game Davinci
+      div(id='opponent-area')
+        div.list-group-item(v-for='oppo in opponents')
+          .opponent-info-box
+            span.glyphicon.glyphicon-user.opponent-icon
+            p {{ oppo.name }}
+          .oppo-card-box
+            .card-btn(v-for='card in oppo.card')
+              button.btn.btn-light {{ card.num }}
 
     script(src='static/js/wsControl.js')
     script(src='static/js/GameControl.js')

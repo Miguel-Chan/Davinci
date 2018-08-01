@@ -4,6 +4,25 @@ const STATES = {
     ENDED: 2
 };
 
+class Card {
+    constructor(num, color) {
+        this.num = num;
+        this.color = color;
+        this.covered = true;
+    }
+}
+
+class User {
+    constructor(name) {
+        this.name = name;
+        this.card = [];
+        for (let i = 0; i < 5; i++) {
+            this.card.push(new Card(i, 'white'));
+            this.card.push(new Card(i + 9, 'black'));
+        }
+    }
+}
+
 class GameSession {
     constructor(player) {
         this.players = [player];
