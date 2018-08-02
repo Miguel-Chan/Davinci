@@ -12,6 +12,7 @@ html(lang='en')
     script(src='static/js/bootstrap.min.js')
     script(src='static/js/bootbox.min.js')
     script(src='static/js/vue.js')
+    script(src='static/js/jquery.bootstrap-growl.min.js')
     title Davinci's Code
 
   body
@@ -41,15 +42,29 @@ html(lang='en')
     div(id='game-area' v-if='gaming')
       h1.logo-name.in-game Davinci
       div(id='opponent-area')
-        div.list-group-item.oppo-list(v-for='oppo in opponents')
+        .list-group-item.oppo-list
+          p Remaining
+          .remain-card-box
+            .card-btn-area
+              button.btn.card-btn.btn-dark {{ session.remainBlack }}
+            .card-btn-area
+              button.btn.card-btn.btn-light {{ session.remainWhite }}
+        div.list-group-item.oppo-list(v-for='oppo in session.players')
           .opponent-info-box
             span.fa.fa-user-circle
             p {{ oppo.name }}
           .opponent-card-box
-            .card-btn-area(v-for='card in oppo.card')
-              button.btn.card-btn(v-bind:class="card.toBootstrapClass()") {{ card.covered ? '<' : card.num }}
+            .card-btn-area(v-for='card in oppo.cards')
+              button.btn.card-btn(v-bind:class="card.toBootstrapClass()") {{ card.content }}
+      div(id='player-area')
+        div.list-group-item.player-list
+          .player-info-box
+            span.fa.fa-user-secret
+            p {{ session.user.name }}
           .player-card-box
-            
+            .card-btn-area(v-for='card in session.user.cards')
+              button.btn.card-btn(v-bind:class="card.toBootstrapClass()") {{ card.content }}
+
 
     script(src='static/js/wsControl.js')
     script(src='static/js/GameControl.js')

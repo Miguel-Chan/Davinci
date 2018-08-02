@@ -1,3 +1,17 @@
 cmd:getNewRoom
 res:newRoomNum||{roomID}
 
+cmd:getRoomList
+res:roomList||{room}||{room}||...
+
+cmd:getRoomUser&&roomID
+res:roomUser||{roomID}||{user}||{user}||...
+
+cmd:joinRoom&&username&&roomID
+res:joinOK||{username}||{roomID}
+    joinFail||{msg}
+
+cmd:getRoomInfo&&username&&roomID
+res:roomInfo||{roomInfoJSON}
+    getInfoFail||{msg}
+

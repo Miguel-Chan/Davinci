@@ -35,6 +35,10 @@ let initialVue = new Vue({
                 bootbox.alert('Room number is invalid!');
                 return;
             }
+            if (this.user.length > 7) {
+                bootbox.alert('Username should not be longer than 7 characters.');
+                return;
+            }
             //TODO: Check if the room exists.
 
             startGame();
@@ -46,13 +50,21 @@ let gameVue = new Vue ({
     el: '#game-area',
     data: {
         gaming: false,
-        opponents: [new User('asd'), new User('123'), new User('ooo')]
+        session: null,
+        user: null,
+        room: null
     }
 })
 
 function startGame() {
     initialVue.waiting = false;
     gameVue.gaming = true;
+    gameVue.user = initialVue.user;
+    gameVue.session = new GameSession(gameVue.user);
+    gameVue.room = initialVue.room;
+    let opponents = [new User('asd'), new User('123'), new User('ooo')];
+    for (let u of opponents)
+        gameVue.session.addPlayer(u);
 }
 
 function endGame() {

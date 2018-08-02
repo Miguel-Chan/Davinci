@@ -11,10 +11,18 @@ const COLOR = {
 
 
 class Card {
-    constructor(num, color) {
-        this.num = num;
+    constructor(content, color) {
+        this.content = content;
         this.color = color;
-        this.covered = true;
+    }
+    get covered() {
+        return this.content === '<'
+    }
+    cover() {
+        this.content = '<';
+    }
+    uncover(num) {
+        this.content = num;
     }
     toBootstrapClass() {
         return 'btn-' + this.color;
@@ -24,23 +32,31 @@ class Card {
 class User {
     constructor(name) {
         this.name = name;
-        this.card = [];
+        this.cards = [];
         for (let i = 0; i < 5; i++) {
-            this.card.push(new Card(i, COLOR.BLACK));
-            this.card.push(new Card(i + 9, COLOR.WHITE));
+            this.cards.push(new Card(i, COLOR.BLACK));
+            this.cards.push(new Card(i + 9, COLOR.WHITE));
         }
-        this.card[2].covered = false;
+        this.cards[2].cover();
+    }
+    get dead() {
+        for (let card of this.cards) {
+            if (card.covered) return false;
+        }
+        return true;
     }
 }
 
 class GameSession {
-    constructor(player) {
-        this.players = [player];
-        this.user = player;
+    constructor(playerName) {
+        this.user = new User(playerName);
+        this.players = [];
         this.state = STATES.READY;
+        this.remainBlack = 10;
+        this.remainWhite = 8;
     }
     addPlayer(newPlayer) {
-        players.append(newPlayer);
+        this.players.push(newPlayer);
     }
     
 }
