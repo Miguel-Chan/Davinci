@@ -49,6 +49,9 @@ body {
     height: 50px;
     width: 80px;
     margin: auto;
+    background-color: white;
+}
+.player-inactive {
     background-color: lightgray;
 }
 .opponent-card-box, .player-card-box {

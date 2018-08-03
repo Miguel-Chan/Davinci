@@ -9,9 +9,10 @@ res:roomUser||{roomID}||{user}||{user}||...
 
 cmd:joinRoom&&username&&roomID
 res:joinOK||{username}||{roomID}
-    joinFail||{msg}
+    Fail||{msg}
 
 cmd:getRoomInfo&&username&&roomID
 res:roomInfo||{roomInfoJSON}
-    getInfoFail||{msg}
+    Fail||{msg}
 
+cmd:

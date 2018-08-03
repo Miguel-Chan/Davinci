@@ -43,14 +43,16 @@ html(lang='en')
       h1.logo-name.in-game Davinci
       div(id='opponent-area')
         .list-group-item.oppo-list
-          p Remaining
+          p Room {{ room }}
+        .list-group-item.oppo-list
+          p Remaining Card
           .remain-card-box
             .card-btn-area
               button.btn.card-btn.btn-dark {{ session.remainBlack }}
             .card-btn-area
               button.btn.card-btn.btn-light {{ session.remainWhite }}
         div.list-group-item.oppo-list(v-for='oppo in session.players')
-          .opponent-info-box
+          .opponent-info-box(v-bind:class="{'player-inactive': !isActive(oppo.name)}")
             span.fa.fa-user-circle
             p {{ oppo.name }}
           .opponent-card-box
@@ -58,7 +60,7 @@ html(lang='en')
               button.btn.card-btn(v-bind:class="card.toBootstrapClass()") {{ card.content }}
       div(id='player-area')
         div.list-group-item.player-list
-          .player-info-box
+          .player-info-box(v-bind:class="{'player-inactive': !isActive(session.user.name)}")
             span.fa.fa-user-secret
             p {{ session.user.name }}
           .player-card-box

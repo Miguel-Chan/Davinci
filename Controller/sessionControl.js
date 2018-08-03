@@ -31,7 +31,51 @@ function getNewRoom() {
     return newID;
 }
 
+//Code 0 for session not exist, 1 for adding,
+// 2 for already in session.
+function addUserToSession(user, sessionID) {
+    if (sessionID in sessionList) {
+        if (user in sessionList[sessionID]) {
+            return {code: 2};
+        }
+        else {
+            sessionList[sessionID].addUser(user);
+            return {code: 1};
+        }
+    }
+    else {
+        return {
+            code: 0,
+            errMsg: "Session does not exists!"
+        }
+    }
+}
+
+function getRoomInfo(user, sessionID) {
+    if (sessionID in sessionList) {
+        if (user in sessionList[sessionID]) {
+            let target = sessionList[sessionID];
+            
+            return {code: 1};
+        }
+        else {
+            sessionList[sessionID].addUser(user);
+            return {
+                code: 0,
+                errMsg: 'User is not in this game room!'
+            };
+        }
+    }
+    else {
+        return {
+            code: 0,
+            errMsg: "Session does not exists!"
+        }
+    }
+}
 
 module.exports = {
-    createNewRoom: getNewRoom
+    createNewRoom: getNewRoom,
+    addUserToSession: addUserToSession,
+    getRoomInfo: getRoomInfo
 }

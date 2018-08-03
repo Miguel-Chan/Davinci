@@ -11,6 +11,14 @@ class RoomInfo {
     }
 }
 
+const asciiArt = "________              .__              .__  \n\
+\\______ \\ _____ ___  _|__| ____   ____ |__|\n\
+ |    |  \\\\__  \\\\  \\/ /  |/    \\_/ ___\\|  |\n\
+ |    `   \\/ __ \\\\   /|  |   |  \\  \\___|  |\n\
+/_______  (____  /\\_/ |__|___|  /\\___  >__|\n\
+        \\/     \\/             \\/     \\/    ";
+
+
 let initialVue = new Vue({
     el: '#choosing-ground',
     data: {
@@ -52,7 +60,13 @@ let gameVue = new Vue ({
         gaming: false,
         session: null,
         user: null,
-        room: null
+        room: null,
+        currentActive: null
+    },
+    methods: {
+        isActive(name) {
+            return name === this.currentActive;
+        }
     }
 })
 
@@ -71,3 +85,5 @@ function endGame() {
     initialVue.waiting = true;
     gameVue.gaming = false;
 }
+
+console.log(asciiArt);

@@ -7,6 +7,7 @@ const mount = require('koa-mount');
 const logger = require('koa-logger');
 const kView = require('koa-views');
 const sessionControl = require('./Controller/sessionControl');
+require('./Controller/AsciiArt');
 
 const app = new Koa();
 let server = app.listen(18623);
@@ -52,12 +53,30 @@ wsServer.on('request', function(request) {
         console.log("ws Request " + wsReqCount + ": " + str);
         let instructions = str.split('&&');
         console.log(`${conn.user}: ${instructions}`);
+        let errMsg = "";
+        let retVal = null;
         switch(instructions[0].toLocaleLowerCase()) {
             //getNewRoom
             case 'getnewroom':
                 let newRoomID = sessionControl.createNewRoom();
                 //newRoomNum||{roomID}
                 sendBack(conn, `newRoomNum||${newRoomID}`);
+                break;
+            //joinRoom&&username&&roomID
+            case 'joinroom':
+                retVal = sessionControl.addUserToSession(instructions[1], instructions[2]);
+                if (retVal.code === 0) {
+                    //Fail||{msg}
+                    sendBack(conn, `Fail||${retVal.errMsg}`);
+                }
+                else {
+                    //joinOK||{username}||{roomID}
+                    sendBack(conn, `joinOK||${instructions[1]}||${instructions[2]}`)
+                }
+                break;
+            //getRoomInfo&&username&&roomID
+            case 'getroominfo':
+                
         }
     })
 })
