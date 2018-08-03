@@ -15,4 +15,6 @@ cmd:getRoomInfo&&username&&roomID
 res:roomInfo||{roomInfoJSON}
     Fail||{msg}
 
-cmd:
+cmd:playerReady&&username&&roomID
+res:(all)ready||{username}||{roomID}
+    Fail||{msg}

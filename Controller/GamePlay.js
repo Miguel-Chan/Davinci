@@ -22,6 +22,7 @@ class UserInfo {
     constructor(username) {
         this.name = username;
         this.cards = [];
+        this.readyState = STATES.READY
     }
     addCard(card) {
         this.cards.push(card);
@@ -37,6 +38,7 @@ module.exports = {
             this.usersInfo = [];
             this.sessionID = id;
             this.state = STATES.READY;
+            this.currentPlayer = null;
             this.whiteDeck = copyArray(cardSet);
             this.blackDeck = copyArray(cardSet);
         }
@@ -52,22 +54,51 @@ module.exports = {
                     whiteRemain: this.whiteDeck.length,
                     blackRemain: this.blackDeck.length,
                 };
+                permittedData.user = null;
+                permittedData.opponent = [];
                 for (info of this.usersInfo) {
-
+                    if (info.name === username) {
+                        let userInfo = {
+                            name: info.name,
+                            cards: [],
+                            readyState: info.readyState
+                        }
+                        for (let card of info.cards) {
+                            let infoCard = {
+                                color = card.color,
+                                content = card.num
+                            };
+                            if (card.covered) {
+                                infoCard.content = infoCard.content + "<";
+                            }
+                            userInfo.cards.push(infoCard);
+                        }
+                        permittedData.user = info;
+                    } else {
+                        let oppoInfo = {
+                            name: info.name,
+                            cards: [],
+                            readyState: info.readyState
+                        }
+                        for (let card of info.cards) {
+                            let infoCard = {
+                                color = card.color,
+                                content = card.covered ? "<" : card.num
+                            };
+                            userInfo.cards.push(infoCard);
+                        }
+                        permittedData.opponent.push(userInfo);
+                    }
                 }
-                return {
-                    code: 1,
-                    data: JSON.stringify(permittedData)
-                };
+                return JSON.stringify(permittedData);
             }
             else {
-                return {
-                    code: 0,
-                    errMsg: 'User is not in the requested session!'
-                };
+                throw Error('User is not in the game');
             }
         }
-        
+        startGame() {
+
+        }
     },
     STATES: STATES
 }

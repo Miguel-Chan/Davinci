@@ -55,7 +55,33 @@ function getRoomInfo(user, sessionID) {
     if (sessionID in sessionList) {
         if (user in sessionList[sessionID]) {
             let target = sessionList[sessionID];
-            
+            let infoJSON = target.toInfoString();
+            return {
+                code: 1,
+                data: infoJSON
+            };
+        }
+        else {
+            sessionList[sessionID].addUser(user);
+            return {
+                code: 0,
+                errMsg: 'User is not in this game room!'
+            };
+        }
+    }
+    else {
+        return {
+            code: 0,
+            errMsg: "Session does not exists!"
+        }
+    }
+}
+
+function playerReady(username, sessID) {
+    if (sessionID in sessionList) {
+        if (user in sessionList[sessionID]) {
+            let target = sessionList[sessionID];
+
             return {code: 1};
         }
         else {
@@ -77,5 +103,6 @@ function getRoomInfo(user, sessionID) {
 module.exports = {
     createNewRoom: getNewRoom,
     addUserToSession: addUserToSession,
-    getRoomInfo: getRoomInfo
+    getRoomInfo: getRoomInfo,
+    playerReady: playerReady
 }

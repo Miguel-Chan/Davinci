@@ -76,6 +76,17 @@ wsServer.on('request', function(request) {
                 break;
             //getRoomInfo&&username&&roomID
             case 'getroominfo':
+                retVal = sessionControl.getRoomInfo(instructions[1], instructions[2]);
+                if (retVal.code === 0) {
+                    sendBack(conn, `Fail||${retVal.errMsg}`);
+                }
+                else {
+                    //roomInfo||{roomInfoJSON}
+                    sendBack(conn, `roomInfo||${retVal.data}`);
+                }
+                break;
+            //playerReady&&username&&roomID
+            case 'playerready':
                 
         }
     })
