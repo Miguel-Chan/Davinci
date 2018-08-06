@@ -11,8 +11,8 @@ function checkForClear(id) {
     if (id in sessionList) {
         if (sessionList[id].state === STATES.PLAYING) {
             //Wait another one hour and check.
-            setTimeout(checkForClear, 3600000, id);
-            console.log(`Session ${id} will stay for another one hour.`);
+            setTimeout(checkForClear, 1800000, id);
+            console.log(`Session ${id} will stay for another half an hour.`);
         }
         else {
             //if the session has not yet started or has ended,
@@ -27,7 +27,7 @@ function getNewRoom() {
     let newID = getRandomString();
     sessionList[newID] = new GameSession(newID);
     console.log(`Session ${newID} created.`);
-    setTimeout(checkForClear, 3600000, newID);
+    setTimeout(checkForClear, 1800000, newID);
     return newID;
 }
 
@@ -77,11 +77,21 @@ function getRoomInfo(user, sessionID) {
     }
 }
 
-function playerReady(username, sessID) {
+function readyRoomList() {
+    let res = [];
+    for (let sessID in sessionList) {
+        if (sessionList[sessID].state === STATES.READY) {
+            res.push(sessID);
+        }
+    }
+    return res;
+}
+
+function playerReady(user, sessionID) {
     if (sessionID in sessionList) {
         if (user in sessionList[sessionID]) {
             let target = sessionList[sessionID];
-
+//TODO
             return {code: 1};
         }
         else {
@@ -104,5 +114,6 @@ module.exports = {
     createNewRoom: getNewRoom,
     addUserToSession: addUserToSession,
     getRoomInfo: getRoomInfo,
-    playerReady: playerReady
+    playerReady: playerReady,
+    readyRoomList: readyRoomList
 }

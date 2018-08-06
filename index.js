@@ -39,7 +39,7 @@ let wsServer = new websocketServer({
 let wsReqCount = 0;
 
 function sendBack(conn, data) {
-    console.log(data);
+    console.log(`${conn.user} <== ${data}`);
     conn.send(data);
 }
 
@@ -53,8 +53,8 @@ wsServer.on('request', function(request) {
         console.log("ws Request " + wsReqCount + ": " + str);
         let instructions = str.split('&&');
         console.log(`${conn.user}: ${instructions}`);
-        let errMsg = "";
         let retVal = null;
+        let retStr = "";
         switch(instructions[0].toLocaleLowerCase()) {
             //getNewRoom
             case 'getnewroom':
@@ -84,6 +84,16 @@ wsServer.on('request', function(request) {
                     //roomInfo||{roomInfoJSON}
                     sendBack(conn, `roomInfo||${retVal.data}`);
                 }
+                break;
+            //getRoomList
+            case 'getroomlist':
+                retVal = sessionControl.readyRoomList();
+                //roomList||{room}||{room}||...
+                retStr = "roomList";
+                for (let room of retVal) {
+                    retStr = retStr + `||${room}`;
+                }
+                sendBack(conn, retStr);
                 break;
             //playerReady&&username&&roomID
             case 'playerready':

@@ -12,6 +12,7 @@ html(lang='en')
     script(src='static/js/bootstrap.min.js')
     script(src='static/js/bootbox.min.js')
     script(src='static/js/vue.js')
+    script(src='static/js/lodash.js')
     script(src='static/js/jquery.bootstrap-growl.min.js')
     title Davinci's Code
 
@@ -32,12 +33,12 @@ html(lang='en')
             button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
               span.fa.fa-list
             .dropdown-menu.pull-right
-              a.dropdown-item(href='#') adfs
+              a.dropdown-item(href='#', v-for='roomID of roomsList', v-on:click='setRoomNumber(roomID)') {{ roomID }}
               .dropdown-divider
               a.dropdown-item(v-on:click='sendNewRoomRequest', href='#') Create a New Room
       .btn-area
         button.btn.btn-success.btn-lg(type='button', v-on:click='joinRoom') Join Room
-        button.btn.btn-primary.btn-lg(type='button') New Room
+        button.btn.btn-primary.btn-lg(type='button', v-on:click='createAndJoin') New Room
 
     div(id='game-area' v-if='gaming')
       h1.logo-name.in-game Davinci
@@ -64,8 +65,8 @@ html(lang='en')
             span.fa.fa-user-secret
             p {{ session.user.name }}
           .player-card-box
-            .card-btn-area(v-for='card in session.user.cards')
-              button.btn.card-btn(v-bind:class="card.toBootstrapClass()") {{ card.content }}
+            .card-btn-area(v-for='(card,index) in userCards')
+              button.btn.card-btn(v-bind:class="card.toBootstrapClass()", v-on:click='clickOnSelfCard(index)') {{ card.content }}
 
 
     script(src='static/js/wsControl.js')

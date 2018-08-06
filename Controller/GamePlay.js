@@ -35,7 +35,7 @@ module.exports = {
     GameSession: class GameSession {
         constructor(id) {
             this.players = [];
-            this.usersInfo = [];
+            this.usersInfo = {};
             this.sessionID = id;
             this.state = STATES.READY;
             this.currentPlayer = null;
@@ -44,7 +44,7 @@ module.exports = {
         }
         addPlayer(newPlayer) {
             this.players.push(newPlayer);
-            this.usersInfo.push(new UserInfo(newPlayer));
+            this.usersInfo[newPlayer] = new UserInfo(newPlayer);
         }
 
         // @param: username: the user querying the data.
@@ -56,7 +56,7 @@ module.exports = {
                 };
                 permittedData.user = null;
                 permittedData.opponent = [];
-                for (info of this.usersInfo) {
+                for (let info of this.usersInfo) {
                     if (info.name === username) {
                         let userInfo = {
                             name: info.name,
@@ -65,15 +65,15 @@ module.exports = {
                         }
                         for (let card of info.cards) {
                             let infoCard = {
-                                color = card.color,
-                                content = card.num
+                                color: card.color,
+                                content: card.num
                             };
                             if (card.covered) {
                                 infoCard.content = infoCard.content + "<";
                             }
                             userInfo.cards.push(infoCard);
                         }
-                        permittedData.user = info;
+                        permittedData.user = userInfo;
                     } else {
                         let oppoInfo = {
                             name: info.name,
@@ -82,12 +82,12 @@ module.exports = {
                         }
                         for (let card of info.cards) {
                             let infoCard = {
-                                color = card.color,
-                                content = card.covered ? "<" : card.num
+                                color: card.color,
+                                content: card.covered ? "<" : card.num
                             };
                             userInfo.cards.push(infoCard);
                         }
-                        permittedData.opponent.push(userInfo);
+                        permittedData.opponent.push(oppoInfo);
                     }
                 }
                 return JSON.stringify(permittedData);
@@ -95,6 +95,9 @@ module.exports = {
             else {
                 throw Error('User is not in the game');
             }
+        }
+        playerReady() {
+            
         }
         startGame() {
 

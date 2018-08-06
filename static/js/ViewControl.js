@@ -1,7 +1,9 @@
 let WsControl;
 $(document).ready(function() {
-    WsControl = new DavinciWsController();
+    WsControl.getRoomList();
 })
+
+WsControl = new DavinciWsController();
 
 class RoomInfo {
     constructor(id, players, state) {
@@ -25,7 +27,11 @@ let initialVue = new Vue({
         room: "",
         user: "",
         roomsList: [],
-        waiting: true
+        waiting: true,
+        creating: false
+    },
+    created: function() {
+        
     },
     methods: {
         sendNewRoomRequest() {
@@ -33,13 +39,54 @@ let initialVue = new Vue({
         },
         setNewRoomNumber(newNum) {
             this.room = newNum;
+            this.roomsList.push(newNum);
+            if (this.creating) {
+                this.confirmNewRoom();
+            }
         },
-        joinRoom() {
-            if (this.user.length === 0 || this.user.indexOf('&') !== -1) {
+        setRoomNumber(num) {
+            this.room = num;
+        },
+        setRoomList(roomArr) {
+            this.roomsList = roomArr;
+        },
+        confirmNewRoom() {
+            bootbox.confirm({
+                title: "New Room",
+                message: `Room Number: ${this.room}. Enter?`,
+                buttons: {
+                    cancel: {
+                        label: '<i class="fa fa-times"></i> Cancel'
+                    },
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> Confirm'
+                    }
+                },
+                callback: function(res) {
+                    if (res) {
+                        initialVue.joinRoom();
+                    }
+                }
+            });
+        },
+        createAndJoin() {
+            if (this.user.length === 0 || this.user.indexOf('&') !== -1 || this.user.indexOf('&') !== -1) {
                 bootbox.alert('Please enter a valid username!');
                 return;
             }
-            if (this.room.length === 0 || this.room.indexOf('&') !== -1) {
+            if (this.user.length > 7) {
+                bootbox.alert('Username should not be longer than 7 characters.');
+                return;
+            }
+            this.creating = true;
+            this.sendNewRoomRequest();
+        },
+        joinRoom() {
+            if (this.user.length === 0 || this.user.indexOf('&') !== -1 || this.user.indexOf('|') !== -1) {
+                bootbox.alert('Please enter a valid username!');
+                return;
+            }
+            if (this.room.length === 0 || this.room.indexOf('&') !== -1 || this.room.indexOf('|') !== -1) {
                 bootbox.alert('Room number is invalid!');
                 return;
             }
@@ -63,9 +110,50 @@ let gameVue = new Vue ({
         room: null,
         currentActive: null
     },
+    computed: {
+        hasStarted: function() {
+            return this.session.state === STATES.PLAYING;
+        },
+        userCards: function() {
+            if (this.session.state === STATES.READY) {
+                return [new Card('Ready', 'light')];
+            } else {
+                return this.session.user.cards;
+            }
+        }
+    },
     methods: {
         isActive(name) {
-            return name === this.currentActive;
+            if (this.session.state === STATES.PLAYING) {
+                return name === this.currentActive;
+            } else if (this.session.state === STATES.READY) {
+                if (name === this.user) {
+                    return this.session.user.state === STATES.PLAYING;
+                }
+                return this.session.players[name].state === STATES.PLAYING;
+            } else {
+                return false;
+            }
+        },
+        clickOnSelfCard(clickedCardIndex) {
+            let cards = this.session.user.cards;
+            //Check if the index is invalid.
+            if (clickedCardIndex < 0 || clickedCardIndex >= cards.length) {
+                bootbox.alert('Error: clicked card not found!');
+            }
+            if (this.session.state === STATES.READY && this.session.user.state === STATES.READY) {
+                WsControl.playerGetReady(this.user);
+            }
+            //TODO: Swap Card position
+        },
+        setPlayerReady(username) {
+            if (this.user === username) {
+                this.session.user.state = STATES.PLAYING;
+            } else if (username in this.session.players) {
+                this.session.players[username].state = STATES.PLAYING;
+            } else {
+                bootbox.alert('Invalid user passed to setPlayerReady()');
+            }
         }
     }
 })
