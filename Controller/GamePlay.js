@@ -55,14 +55,14 @@ module.exports = {
                     blackRemain: this.blackDeck.length,
                 };
                 permittedData.user = null;
-                permittedData.opponent = [];
+                permittedData.opponents = [];
                 for (let u in this.usersInfo) {
                     let info = this.usersInfo[u];
                     if (info.name === username) {
                         let userInfo = {
                             name: info.name,
                             cards: [],
-                            readyState: info.readyState
+                            state: info.readyState
                         }
                         for (let card of info.cards) {
                             let infoCard = {
@@ -79,7 +79,7 @@ module.exports = {
                         let oppoInfo = {
                             name: info.name,
                             cards: [],
-                            readyState: info.readyState
+                            state: info.readyState
                         }
                         for (let card of info.cards) {
                             let infoCard = {
@@ -88,7 +88,7 @@ module.exports = {
                             };
                             userInfo.cards.push(infoCard);
                         }
-                        permittedData.opponent.push(oppoInfo);
+                        permittedData.opponents.push(oppoInfo);
                     }
                 }
                 return JSON.stringify(permittedData);
@@ -97,8 +97,19 @@ module.exports = {
                 throw Error('User is not in the game');
             }
         }
-        playerReady() {
-            
+        playerReady(username) {
+            this.usersInfo[username].readyState = STATES.PLAYING;
+            //IF all players are ready, start the game.
+            let startFlag = true;
+            for (let p in this.usersInfo) {
+                if (this.usersInfo[p] !== STATES.PLAYING) {
+                    startFlag = false;
+                    break;
+                }
+            }
+            if (startFlag) {
+                this.startGame();
+            }
         }
         startGame() {
 

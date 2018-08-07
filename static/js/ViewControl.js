@@ -163,9 +163,10 @@ function startGame() {
     gameVue.user = initialVue.user;
     gameVue.session = new GameSession(gameVue.user);
     gameVue.room = initialVue.room;
-    let opponents = [new User('asd'), new User('123'), new User('ooo')];
-    for (let u of opponents)
-        gameVue.session.addPlayer(u);
+    // let opponents = [new User('asd'), new User('123'), new User('ooo')];
+    // for (let u of opponents)
+    //     gameVue.session.addPlayer(u);
+    WsControl.getRoomInfo(gameVue.user, gameVue.room);
 }
 
 function endGame() {

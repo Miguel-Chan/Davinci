@@ -43,6 +43,18 @@ function sendBack(conn, data) {
     conn.send(data);
 }
 
+function roomBroadcastInfo(roomID) {
+    let players = sessionControl.getSessionPlayers(roomID);
+    for (let p of players) {
+        if ((p + roomID) in connections) {
+            let conn = connections[p + roomID];
+            let info = sessionControl.getRoomInfo(p, roomID)
+            sendBack(conn, `roomInfo||${info.data}`);
+        }
+    }
+}
+
+//id=user+sessID
 let connections = {};
 
 wsServer.on('request', function(request) {
@@ -76,7 +88,8 @@ wsServer.on('request', function(request) {
                     conn.sess = instructions[2];
                     connections[conn.user + conn.sess] = conn;
                     //joinOK||{username}||{roomID}
-                    sendBack(conn, `joinOK||${instructions[1]}||${instructions[2]}`)
+                    sendBack(conn, `joinOK||${instructions[1]}||${instructions[2]}`);
+                    roomBroadcastInfo(instructions[2]);
                 }
                 break;
             //getRoomInfo&&username&&roomID
@@ -112,7 +125,9 @@ wsServer.on('request', function(request) {
             delete connections[conn.user + conn.sess];
             let players = sessionControl.getSessionPlayers(conn.sess);
             for (let pl of players) {
-                connections[pl + conn.sess].sendUTF('userLogOut||' + conn.user);
+                if ((pl + conn.sess) in connections) {
+                    connections[pl + conn.sess].sendUTF('userLogOut||' + conn.user);
+                }
             }
         }
     });
@@ -120,12 +135,12 @@ wsServer.on('request', function(request) {
     conn.on('error', async function(code, reason){
         if (conn.user && conn.sess) {
             console.log("Error: " + conn.user);
-            console.log(code);
-            console.log(reason);
             delete connections[conn.user + conn.sess];
             let players = sessionControl.getSessionPlayers(conn.sess);
             for (let pl of players) {
-                connections[pl + conn.sess].sendUTF('userLogOut||' + conn.user);
+                if ((pl + conn.sess) in connections) {
+                    connections[pl + conn.sess].sendUTF('userLogOut||' + conn.user);
+                }
             }
         }
     });

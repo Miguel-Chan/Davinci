@@ -56,7 +56,7 @@ html(lang='en')
           .opponent-info-box(v-bind:class="{'player-inactive': !isActive(oppo.name)}")
             span.fa.fa-user-circle
             p {{ oppo.name }}
-          .opponent-card-box
+          .opponent-card-box(v-if='oppo.cards.length !== 0')
             .card-btn-area(v-for='card in oppo.cards')
               button.btn.card-btn(v-bind:class="card.toBootstrapClass()") {{ card.content }}
       div(id='player-area')

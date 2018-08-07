@@ -40,7 +40,17 @@ class DavinciWsController {
                     initialVue.room = room;
                     startGame();
                     break;
-
+                //roomInfo||{roomInfoJSON}
+                case 'roominfo':
+                    let info = JSON.parse(data[1]);
+                    gameVue.session.user = info.user;
+                    let oppos = {};
+                    for (let op of info.opponents) {
+                        oppos[op.name] = op;
+                    }
+                    gameVue.session.players = oppos;
+                    gameVue.state = info.state; 
+                    break;
                 case 'fail':
                     bootbox.alert(data[1]);
                     break;
@@ -56,6 +66,10 @@ class DavinciWsController {
     joinRoom(username, roomID) {
         //joinRoom&&username&&roomID
         this.connection.send(`joinRoom&&${username}&&${roomID}`);
+    }
+    getRoomInfo(username, roomID) {
+        //getRoomInfo&&username&&roomID
+        this.connection.send(`getRoomInfo&&${username}&&${roomID}`);
     }
     playerGetReady(username) {
 

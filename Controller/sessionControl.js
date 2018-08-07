@@ -26,6 +26,8 @@ function checkForClear(id) {
 function getNewRoom() {
     let newID = getRandomString();
     sessionList[newID] = new GameSession(newID);
+    sessionList[newID].addPlayer("12345");
+    sessionList[newID].addPlayer("qwe");
     console.log(`Session ${newID} created.`);
     setTimeout(checkForClear, 1800000, newID);
     return newID;
