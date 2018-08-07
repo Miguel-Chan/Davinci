@@ -51,6 +51,7 @@ class User {
     }
 }
 
+
 class GameSession {
     constructor(playerName) {
         this.user = new User(playerName);

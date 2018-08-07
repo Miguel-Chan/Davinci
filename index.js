@@ -12,7 +12,7 @@ require('./Controller/AsciiArt');
 const app = new Koa();
 let server = app.listen(18623);
 console.log("Listening on port 18623");
-app.use(logger())
+//app.use(logger())
 
 let staticKoa = new Koa();
 staticKoa.use(kStatic(
@@ -43,6 +43,8 @@ function sendBack(conn, data) {
     conn.send(data);
 }
 
+let connections = {};
+
 wsServer.on('request', function(request) {
     console.log(new Date() + ' Connection accepted.');
     let conn = request.accept();
@@ -70,6 +72,9 @@ wsServer.on('request', function(request) {
                     sendBack(conn, `Fail||${retVal.errMsg}`);
                 }
                 else {
+                    conn.user = instructions[1];
+                    conn.sess = instructions[2];
+                    connections[conn.user + conn.sess] = conn;
                     //joinOK||{username}||{roomID}
                     sendBack(conn, `joinOK||${instructions[1]}||${instructions[2]}`)
                 }
@@ -99,5 +104,30 @@ wsServer.on('request', function(request) {
             case 'playerready':
                 
         }
-    })
+    });
+
+    conn.on('close', async function(code, reason){
+        if (conn.user && conn.sess) {
+            console.log("Close: " + conn.user);
+            delete connections[conn.user + conn.sess];
+            let players = sessionControl.getSessionPlayers(conn.sess);
+            for (let pl of players) {
+                connections[pl + conn.sess].sendUTF('userLogOut||' + conn.user);
+            }
+        }
+    });
+
+    conn.on('error', async function(code, reason){
+        if (conn.user && conn.sess) {
+            console.log("Error: " + conn.user);
+            console.log(code);
+            console.log(reason);
+            delete connections[conn.user + conn.sess];
+            let players = sessionControl.getSessionPlayers(conn.sess);
+            for (let pl of players) {
+                connections[pl + conn.sess].sendUTF('userLogOut||' + conn.user);
+            }
+        }
+    });
 })
+

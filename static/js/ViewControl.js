@@ -95,8 +95,7 @@ let initialVue = new Vue({
                 return;
             }
             //TODO: Check if the room exists.
-
-            startGame();
+            WsControl.joinRoom(this.user, this.room);
         }
     }
 })

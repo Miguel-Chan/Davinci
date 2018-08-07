@@ -35,11 +35,17 @@ function getNewRoom() {
 // 2 for already in session.
 function addUserToSession(user, sessionID) {
     if (sessionID in sessionList) {
-        if (user in sessionList[sessionID]) {
+        if (sessionList[sessionID].players.length === 4) {
+            return {
+                code: 0,
+                errMsg: "Room is already full!"
+            };
+        }
+        if (sessionList[sessionID].players.includes(user)) {
             return {code: 2};
         }
         else {
-            sessionList[sessionID].addUser(user);
+            sessionList[sessionID].addPlayer(user);
             return {code: 1};
         }
     }
@@ -53,16 +59,15 @@ function addUserToSession(user, sessionID) {
 
 function getRoomInfo(user, sessionID) {
     if (sessionID in sessionList) {
-        if (user in sessionList[sessionID]) {
+        if (sessionList[sessionID].players.includes(user)) {
             let target = sessionList[sessionID];
-            let infoJSON = target.toInfoString();
+            let infoJSON = target.toInfoString(user);
             return {
                 code: 1,
                 data: infoJSON
             };
         }
         else {
-            sessionList[sessionID].addUser(user);
             return {
                 code: 0,
                 errMsg: 'User is not in this game room!'
@@ -89,9 +94,10 @@ function readyRoomList() {
 
 function playerReady(user, sessionID) {
     if (sessionID in sessionList) {
-        if (user in sessionList[sessionID]) {
+        if (sessionList[sessionID].players.includes(user)) {
             let target = sessionList[sessionID];
 //TODO
+
             return {code: 1};
         }
         else {
@@ -110,10 +116,16 @@ function playerReady(user, sessionID) {
     }
 }
 
+function getSessionPlayers(sessID) {
+    let sess = sessionList[sessID];
+    return sess.players;
+}
+
 module.exports = {
     createNewRoom: getNewRoom,
     addUserToSession: addUserToSession,
     getRoomInfo: getRoomInfo,
     playerReady: playerReady,
-    readyRoomList: readyRoomList
+    readyRoomList: readyRoomList,
+    getSessionPlayers: getSessionPlayers
 }

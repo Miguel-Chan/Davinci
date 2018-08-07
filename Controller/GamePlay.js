@@ -49,14 +49,15 @@ module.exports = {
 
         // @param: username: the user querying the data.
         toInfoString(username) {
-            if (username in this.players) {
+            if (this.players.includes(username)) {
                 let permittedData = {
                     whiteRemain: this.whiteDeck.length,
                     blackRemain: this.blackDeck.length,
                 };
                 permittedData.user = null;
                 permittedData.opponent = [];
-                for (let info of this.usersInfo) {
+                for (let u in this.usersInfo) {
+                    let info = this.usersInfo[u];
                     if (info.name === username) {
                         let userInfo = {
                             name: info.name,

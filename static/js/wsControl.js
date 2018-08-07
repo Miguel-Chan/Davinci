@@ -32,6 +32,18 @@ class DavinciWsController {
                     }
                     initialVue.setRoomList(list);
                     break;
+                case 'joinok':
+                    //joinOK||{username}||{roomID}
+                    let username = data[1];
+                    let room = data[2];
+                    initialVue.user = username;
+                    initialVue.room = room;
+                    startGame();
+                    break;
+
+                case 'fail':
+                    bootbox.alert(data[1]);
+                    break;
             }
         } 
     }
@@ -40,6 +52,10 @@ class DavinciWsController {
     }
     getRoomList() {
         this.connection.send("getRoomList");
+    }
+    joinRoom(username, roomID) {
+        //joinRoom&&username&&roomID
+        this.connection.send(`joinRoom&&${username}&&${roomID}`);
     }
     playerGetReady(username) {
 
