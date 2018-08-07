@@ -115,7 +115,12 @@ wsServer.on('request', function(request) {
                 break;
             //playerReady&&username&&roomID
             case 'playerready':
-                
+                retVal = sessionControl.playerReady(instructions[1], instructions[2]);
+                if (retVal.code === 1) {
+                    roomBroadcastInfo(instructions[2]);
+                } else {
+                    sendBack(conn, `Fail||${retVal.errMsg}`);
+                }
         }
     });
 

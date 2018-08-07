@@ -98,8 +98,13 @@ function playerReady(user, sessionID) {
     if (sessionID in sessionList) {
         if (sessionList[sessionID].players.includes(user)) {
             let target = sessionList[sessionID];
-//TODO
-
+            if (target.players[user].state === STATES.PLAYING) {
+                return {
+                    code: 0,
+                    errMsg: 'User is already ready for the game.'
+                };
+            }
+            target.playerReady(user);
             return {code: 1};
         }
         else {

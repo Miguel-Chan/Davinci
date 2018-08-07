@@ -16,11 +16,11 @@ res:roomInfo||{roomInfoJSON}
     Fail||{msg}
 
 cmd:playerReady&&username&&roomID
-res:(all)ready||{username}||{roomID}
+res:flush
     Fail||{msg}
 
 
-cmd:playerChoose
+cmd:playerChoose&&username&&roomID&&targetUser&&cardIndex
 res:roomInfo||{roomInfoJSON}
     Fail||{msg}
 
