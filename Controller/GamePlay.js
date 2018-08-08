@@ -56,6 +56,8 @@ module.exports = {
                 };
                 permittedData.user = null;
                 permittedData.opponents = [];
+                permittedData.state = this.state;
+                permittedData.currentActive = this.currentPlayer;
                 for (let u in this.usersInfo) {
                     let info = this.usersInfo[u];
                     if (info.name === username) {
@@ -102,17 +104,18 @@ module.exports = {
             //IF all players are ready, start the game.
             let startFlag = true;
             for (let p in this.usersInfo) {
-                if (this.usersInfo[p] !== STATES.PLAYING) {
+                if (this.usersInfo[p].readyState !== STATES.PLAYING) {
                     startFlag = false;
                     break;
                 }
             }
-            if (startFlag) {
+            if (startFlag && this.players.length >= 2) {
                 this.startGame();
             }
         }
         startGame() {
-
+            this.state = STATES.PLAYING;
+            this.currentPlayer = this.players[Math.floor(Math.random() * this.players.length)];
         }
     },
     STATES: STATES

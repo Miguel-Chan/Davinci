@@ -26,8 +26,8 @@ function checkForClear(id) {
 function getNewRoom() {
     let newID = getRandomString();
     sessionList[newID] = new GameSession(newID);
-    sessionList[newID].addPlayer("12345");
-    sessionList[newID].addPlayer("qwe");
+    // sessionList[newID].addPlayer("12345");
+    // sessionList[newID].addPlayer("qwe");
     console.log(`Session ${newID} created.`);
     setTimeout(checkForClear, 1800000, newID);
     return newID;
@@ -37,14 +37,25 @@ function getNewRoom() {
 // 2 for already in session.
 function addUserToSession(user, sessionID) {
     if (sessionID in sessionList) {
+        if (sessionList[sessionID].players.includes(user)) {
+            return {code: 2};
+        }
+        if (sessionList[sessionID].state === STATES.PLAYING) {
+            return {
+                code: 0,
+                errMsg: 'Game has started in this room!'
+            };
+        } else if (sessionList[sessionID].state === STATES.ENDED) {
+            return {
+                code: 0,
+                errMsg: 'Game has ended in this room!'
+            };
+        }
         if (sessionList[sessionID].players.length === 4) {
             return {
                 code: 0,
                 errMsg: "Room is already full!"
             };
-        }
-        if (sessionList[sessionID].players.includes(user)) {
-            return {code: 2};
         }
         else {
             sessionList[sessionID].addPlayer(user);
@@ -98,7 +109,7 @@ function playerReady(user, sessionID) {
     if (sessionID in sessionList) {
         if (sessionList[sessionID].players.includes(user)) {
             let target = sessionList[sessionID];
-            if (target.players[user].state === STATES.PLAYING) {
+            if (target.usersInfo[user].state === STATES.PLAYING) {
                 return {
                     code: 0,
                     errMsg: 'User is already ready for the game.'

@@ -20,8 +20,11 @@ res:flush
     Fail||{msg}
 
 
-cmd:playerChoose&&username&&roomID&&targetUser&&cardIndex
+cmd:playerGuess&&username&&roomID&&targetUser&&cardIndex&&guessNum
 res:roomInfo||{roomInfoJSON}
     Fail||{msg}
 
-    
+cmd:playerPickRemain&&username&&roomID&&pickColor
+res:roomInfo||{roomInfoJSON}
+    Fail||{msg}
+

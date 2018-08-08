@@ -33,11 +33,11 @@ class User {
     constructor(name, state) {
         this.name = name;
         this.cards = [];
-        for (let i = 0; i < 5; i++) {
-            this.cards.push(new Card(i, COLOR.BLACK));
-            this.cards.push(new Card(i + 9, COLOR.WHITE));
-        }
-        this.cards[2].cover();
+        // for (let i = 0; i < 5; i++) {
+        //     this.cards.push(new Card(i, COLOR.BLACK));
+        //     this.cards.push(new Card(i + 9, COLOR.WHITE));
+        // }
+        // this.cards[2].cover();
         this.state = state;
     }
     addCard(card) {

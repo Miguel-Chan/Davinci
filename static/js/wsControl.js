@@ -49,7 +49,13 @@ class DavinciWsController {
                         oppos[op.name] = op;
                     }
                     gameVue.session.players = oppos;
-                    gameVue.state = info.state; 
+                    gameVue.currentActive = info.currentActive;
+                    gameVue.session.remainWhite = info.whiteRemain;
+                    gameVue.session.remainBlack = info.blackRemain;
+                    if (gameVue.session.state !== info.state && info.state === STATES.PLAYING) {
+                        gameVue.session.state = info.state; 
+                        $.bootstrapGrowl('Game Start!');
+                    }
                     break;
                 case 'fail':
                     bootbox.alert(data[1]);
@@ -71,7 +77,8 @@ class DavinciWsController {
         //getRoomInfo&&username&&roomID
         this.connection.send(`getRoomInfo&&${username}&&${roomID}`);
     }
-    playerGetReady(username) {
-
+    playerGetReady(username, roomID) {
+        //playerReady&&username&&roomID
+        this.connection.send(`playerReady&&${username}&&${roomID}`)
     }
 }

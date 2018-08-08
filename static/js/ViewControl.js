@@ -137,13 +137,17 @@ let gameVue = new Vue ({
         clickOnSelfCard(clickedCardIndex) {
             let cards = this.session.user.cards;
             //Check if the index is invalid.
-            if (clickedCardIndex < 0 || clickedCardIndex >= cards.length) {
+            if (this.session.state === STATES.READY) {
+                if (this.session.user.state === STATES.READY) {
+                    WsControl.playerGetReady(this.user, this.room);
+                } else {
+                    bootbox.alert('Player is already ready!');
+                }
+            } else if (clickedCardIndex < 0 || clickedCardIndex >= cards.length) {
                 bootbox.alert('Error: clicked card not found!');
-            }
-            if (this.session.state === STATES.READY && this.session.user.state === STATES.READY) {
-                WsControl.playerGetReady(this.user);
-            }
+            } else {
             //TODO: Swap Card position
+            }
         },
         setPlayerReady(username) {
             if (this.user === username) {
