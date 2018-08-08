@@ -139,11 +139,32 @@ function getSessionPlayers(sessID) {
     return sess.players;
 }
 
+function playerPickCard(username, roomID, color) {
+    if (roomID in sessionList) {
+        if (sessionList[roomID].players.includes(username)) {
+            let targetSess = sessionList[roomID];
+            targetSess.playerPick(username, color);
+            return {code: 1};
+        } else {
+            return {
+                code: 0,
+                errMsg: "User is not in the requested session!"
+            };
+        }
+    } else {
+        return {
+            code: 0,
+            errMsg: 'Session does not exist!'
+        };
+    }
+}
+
 module.exports = {
     createNewRoom: getNewRoom,
     addUserToSession: addUserToSession,
     getRoomInfo: getRoomInfo,
     playerReady: playerReady,
     readyRoomList: readyRoomList,
-    getSessionPlayers: getSessionPlayers
+    getSessionPlayers: getSessionPlayers,
+    playerPickCard: playerPickCard
 }

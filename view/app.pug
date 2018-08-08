@@ -19,7 +19,7 @@ html(lang='en')
   body
     div(id='choosing-ground', v-if='waiting')
       h1.logo-name Davinci
-      .info-area(style='padding: 5% 30% 5% 30%;')
+      .info-area(style='padding: 5% 20% 5% 20%;')
         .input-group
           span.input-group-prepend.dropdown
             button.btn.btn-primary.dropdown-toggle(data-toggle='dropdown')
@@ -57,7 +57,7 @@ html(lang='en')
             span.fa.fa-user-circle
             p {{ oppo.name }}
           .opponent-card-box(v-if='oppo.cards.length !== 0')
-            .card-btn-area(v-for='card in oppo.cards')
+            .card-btn-area(v-for='card of oppo.cards')
               button.btn.card-btn(v-bind:class="card.toBootstrapClass()") {{ card.content }}
       div(id='player-area')
         div.list-group-item.player-list

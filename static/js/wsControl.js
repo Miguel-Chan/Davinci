@@ -43,9 +43,19 @@ class DavinciWsController {
                 //roomInfo||{roomInfoJSON}
                 case 'roominfo':
                     let info = JSON.parse(data[1]);
+                    let cards = [];
+                    info.user.cards.forEach((element, index) => {
+                        cards.push(cloneCard(element));
+                    });
+                    info.user.cards = cards;
                     gameVue.session.user = info.user;
                     let oppos = {};
                     for (let op of info.opponents) {
+                        cards = [];
+                        op.cards.forEach((element, index) => {
+                            cards.push(cloneCard(element));
+                        });
+                        op.cards = cards;
                         oppos[op.name] = op;
                     }
                     gameVue.session.players = oppos;
@@ -80,5 +90,9 @@ class DavinciWsController {
     playerGetReady(username, roomID) {
         //playerReady&&username&&roomID
         this.connection.send(`playerReady&&${username}&&${roomID}`)
+    }
+    playerPick(user, roomID, color) {
+        //playerPick&&username&&roomID&&pickColor
+        this.connection.send(`playerPick&&${user}&&${roomID}&&${color}`);
     }
 }

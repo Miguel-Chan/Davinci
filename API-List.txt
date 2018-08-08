@@ -24,7 +24,7 @@ cmd:playerGuess&&username&&roomID&&targetUser&&cardIndex&&guessNum
 res:roomInfo||{roomInfoJSON}
     Fail||{msg}
 
-cmd:playerPickRemain&&username&&roomID&&pickColor
+cmd:playerPick&&username&&roomID&&pickColor
 res:roomInfo||{roomInfoJSON}
     Fail||{msg}
 

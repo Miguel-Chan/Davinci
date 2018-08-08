@@ -9,6 +9,9 @@ const COLOR = {
     WHITE: "light"
 }
 
+function cloneCard(that) {
+    return new Card(that.content, that.color);
+}
 
 class Card {
     constructor(content, color) {
@@ -16,7 +19,7 @@ class Card {
         this.color = color;
     }
     get covered() {
-        return this.content === '<'
+        return this.content.indexOf('<') !== -1;
     }
     cover() {
         this.content = '<';

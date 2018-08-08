@@ -39,7 +39,7 @@ let wsServer = new websocketServer({
 let wsReqCount = 0;
 
 function sendBack(conn, data) {
-    console.log(`${conn.user} <== ${data}`);
+    console.log(`${conn.sess}:${conn.user} <== ${data}`);
     conn.send(data);
 }
 
@@ -54,12 +54,28 @@ function roomBroadcastInfo(roomID) {
     }
 }
 
+function broadcastNewRoomList() {
+    let retVal = sessionControl.readyRoomList();
+    //roomList||{room}||{room}||...
+    let retStr = "roomList";
+    for (let room of retVal) {
+        retStr = retStr + `||${room}`;
+    }
+    for (let id in allConn) {
+        allConn[id].send(retStr);
+    }
+}
+
 //id=user+sessID
 let connections = {};
+let allConn = {};
 
 wsServer.on('request', function(request) {
     console.log(new Date() + ' Connection accepted.');
     let conn = request.accept();
+    let connID = Math.random().toString(36).substring(3);
+    conn.sign = connID;
+    allConn[connID] = conn;
 
     conn.on('message', async function(data) {
         wsReqCount++;
@@ -75,6 +91,7 @@ wsServer.on('request', function(request) {
                 let newRoomID = sessionControl.createNewRoom();
                 //newRoomNum||{roomID}
                 sendBack(conn, `newRoomNum||${newRoomID}`);
+                broadcastNewRoomList();
                 break;
             //joinRoom&&username&&roomID
             case 'joinroom':
@@ -121,6 +138,23 @@ wsServer.on('request', function(request) {
                 } else {
                     sendBack(conn, `Fail||${retVal.errMsg}`);
                 }
+                break;
+            //playerPick&&username&&roomID&&pickColor
+            case 'playerpick':
+                let user = instructions[1];
+                let roomID = instructions[2];
+                let color = instructions[3].toLocaleLowerCase();
+                retVal = sessionControl.playerPickCard(user, roomID, color);
+                if (retVal.code === 1) {
+                    roomBroadcastInfo(roomID);
+                } else {
+                    sendBack(conn, `Fail||${retVal.errMsg}`);
+                }
+                break;
+            //playerGuess&&username&&roomID&&targetUser&&cardIndex&&guessNum
+            case 'playerguess':
+                
+                break;
         }
     });
 
@@ -135,6 +169,9 @@ wsServer.on('request', function(request) {
                 }
             }
         }
+        if (conn.sign) {
+            delete allConn[conn.sign];
+        }
     });
 
     conn.on('error', async function(code, reason){
@@ -147,6 +184,9 @@ wsServer.on('request', function(request) {
                     connections[pl + conn.sess].sendUTF('userLogOut||' + conn.user);
                 }
             }
+        }
+        if (conn.sign) {
+            delete allConn[conn.sign];
         }
     });
 })

@@ -25,10 +25,21 @@ class UserInfo {
         this.readyState = STATES.READY
     }
     addCard(card) {
-        this.cards.push(card);
+        insertIntoDeck(this.cards, card);
     }
 }
 
+function insertIntoDeck(deck, card) {
+    for (let i = 0; i < deck.length; i++) {
+        if ((card.num === '-' && Math.random() > 0.7) ||
+         (!isNaN(parseInt(deck[i].num)) && !isNaN(parseInt(card.num)) 
+         && parseInt(deck[i].num) >= parseInt(card.num))) {
+            deck.splice(i, 0, card);
+            return;
+        }
+    }
+    deck.splice(deck.length, 0, card);
+}
 
 
 module.exports = {
@@ -38,9 +49,11 @@ module.exports = {
             this.usersInfo = {};
             this.sessionID = id;
             this.state = STATES.READY;
-            this.currentPlayer = null;
+            this.currentPlayerIndex = null;
             this.whiteDeck = copyArray(cardSet);
             this.blackDeck = copyArray(cardSet);
+            this.picked = false;
+            this.pendingCard = null;
         }
         addPlayer(newPlayer) {
             this.players.push(newPlayer);
@@ -74,6 +87,10 @@ module.exports = {
                             if (card.covered) {
                                 infoCard.content = infoCard.content + "<";
                             }
+                            if (this.pendingCard.color === card.color &&
+                                this.pendingCard.content === card.content) {
+                                infoCard.content = infoCard.content + "?";
+                            }
                             userInfo.cards.push(infoCard);
                         }
                         permittedData.user = userInfo;
@@ -88,7 +105,7 @@ module.exports = {
                                 color: card.color,
                                 content: card.covered ? "<" : card.num
                             };
-                            userInfo.cards.push(infoCard);
+                            oppoInfo.cards.push(infoCard);
                         }
                         permittedData.opponents.push(oppoInfo);
                     }
@@ -113,9 +130,62 @@ module.exports = {
                 this.startGame();
             }
         }
+        get currentPlayer() {
+            return this.players[this.currentPlayerIndex];
+        }
         startGame() {
             this.state = STATES.PLAYING;
-            this.currentPlayer = this.players[Math.floor(Math.random() * this.players.length)];
+            this.currentPlayerIndex = Math.floor(Math.random() * this.players.length);
+            this.picked = false;
+            this.shuffleCard();
+        }
+        shuffleCard() {
+            let initCount = this.players.length === 4 ? 3 : 4;
+            for (let u in this.usersInfo) {
+                for (let i = 0; i < initCount; i++) {
+                    this.usersInfo[u].addCard(this.getRandomCard());
+                }
+            }
+        }
+        getRandomCard() {
+            let cNum = Math.floor(Math.random() * 2);
+            if (cNum < 1) {
+                //black
+                let index = Math.floor(Math.random() * this.blackDeck.length);
+                let content = this.blackDeck[index];
+                this.blackDeck.splice(content, 1);
+                return new Card('dark', content);
+            } else {
+                //white
+                let index = Math.floor(Math.random() * this.whiteDeck.length);
+                let content = this.whiteDeck[index];
+                this.whiteDeck.splice(content, 1);
+                return new Card('light', content);
+            }
+        }
+        playerPick(username, color) {
+            if (username !== this.currentPlayer) {
+                throw Error('Wrong Player!');
+            }
+            if (color === 'dark') {
+                if (this.blackDeck.length === 0) {
+                    throw Error('Empty black deck!');
+                }
+                let index = Math.floor(Math.random() * this.blackDeck.length);
+                let content = this.blackDeck[index];
+                this.blackDeck.splice(content, 1);
+                let newCard = new Card("dark", content);
+                this.usersInfo.addCard(newCard);
+            } else if (color === 'light') {
+                if (this.whiteDeck.length === 0) {
+                    throw Error('Empty white deck!');
+                }
+                let index = Math.floor(Math.random() * this.whiteDeck.length);
+                let content = this.whiteDeck[index];
+                this.whiteDeck.splice(content, 1);
+                let newCard = new Card("light", content);
+                this.usersInfo.addCard(newCard);
+            }
         }
     },
     STATES: STATES
