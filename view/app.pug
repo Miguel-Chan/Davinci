@@ -49,9 +49,9 @@ html(lang='en')
           p Remaining Card
           .remain-card-box
             .card-btn-area
-              button.btn.card-btn.btn-dark {{ session.remainBlack }}
+              button.btn.card-btn.btn-dark(v-on:click='clickOnRemainCard("dark")') {{ session.remainBlack }}
             .card-btn-area
-              button.btn.card-btn.btn-light {{ session.remainWhite }}
+              button.btn.card-btn.btn-light(v-on:click='clickOnRemainCard("light")') {{ session.remainWhite }}
         div.list-group-item.oppo-list(v-for='oppo in session.players')
           .opponent-info-box(v-bind:class="{'player-inactive': !isActive(oppo.name)}")
             span.fa.fa-user-circle

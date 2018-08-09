@@ -143,6 +143,28 @@ function playerPickCard(username, roomID, color) {
     if (roomID in sessionList) {
         if (sessionList[roomID].players.includes(username)) {
             let targetSess = sessionList[roomID];
+            if (targetSess.currentPlayer !== username) {
+                return {
+                    code: 0,
+                    errMsg: "User is not the current active player."
+                };
+            }
+            if (color === 'dark' && targetSess.blackDeck.length === 0) {
+                return {
+                    code: 0,
+                    errMsg: "Empty Black Deck!"
+                };
+            } else if (color === 'light' && targetSess.whiteDeck.length === 0) {
+                return {
+                    code: 0,
+                    errMsg: "Empty White Deck!"
+                };
+            } else if (targetSess.picked) {
+                return {
+                    code: 0,
+                    errMsg: 'User has already picked a card!'
+                };
+            }
             targetSess.playerPick(username, color);
             return {code: 1};
         } else {
