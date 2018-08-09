@@ -194,6 +194,47 @@ module.exports = {
         this.picked = true;
       }
     }
+
+    clearDeadUser() {
+      for (let i in this.players) {
+        let u = this.players[i];
+        let deck = this.usersInfo[u].cards;
+        let flag = true;
+        for (let card of deck) {
+          if (card.covered) {
+            flag = false;
+            break;
+          }
+        }
+        if (flag) {
+          this.players.splice(i, 1);
+        }
+      }
+    }
+
+    guessCard(username, targetUsername, cardIndex, guessNum) {
+      if (this.currentPlayer !== username) {
+        throw Error('guessing User is not the current active user!');
+      }
+      let targetUser = this.usersInfo[targetUsername];
+      let targetCard = targetUser.cards[cardIndex];
+      if (targetCard.num === guessNum) {
+        targetCard.covered = false;
+        this.clearDeadUser();
+      } else {
+        this.pendingCard.covered = false;
+      }
+      this.pendingCard = null;
+      if (this.blackDeck.length !== 0 || this.whiteDeck.length !== 0) {
+        this.picked = false;
+      }
+      if (this.players.length === 1) {
+        this.state = STATES.ENDED;
+      }
+      else {
+        this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
+      }
+    }
   },
   STATES: STATES
 }

@@ -181,6 +181,50 @@ function playerPickCard(username, roomID, color) {
     }
 }
 
+function playerGuessCard(username, roomID, targetUser, cardIndex, guessNum) {
+    if (roomID in sessionList) {
+        let targetSess = sessionList[roomID];
+        if (targetSess.players.includes(username)) {
+            if (targetSess.currentPlayer !== username) {
+                if (targetSess.players.includes(targetUser)) {
+                    if (targetSess.usersInfo[targetUser].cards.length <= cardIndex) {
+                        return  {
+                            code: 0,
+                            errMsg: 'Target User doesn\'t have the requested card!'
+                        };
+                    } else if (!targetSess.picked) {
+                        return {
+                            code: 0,
+                            errMsg: 'User must pick a remaining card first!'
+                        };
+                    }
+                    targetSess.guessCard(username, targetUser, cardIndex, guessNum);
+                } else {
+                    return {
+                        code: 0,
+                        errMsg: 'target User is not in the requested session.'
+                    };
+                }
+            } else {
+                return {
+                    code: 0,
+                    errMsg: 'User is not the current active player!'
+                };
+            }
+        } else {
+            return {
+                code: 0,
+                errMsg: 'User is not in the requested session!'
+            };
+        }
+    } else {
+        return {
+            code: 0,
+            errMsg: 'Session does not exist!'
+        };
+    }
+}
+
 module.exports = {
     createNewRoom: getNewRoom,
     addUserToSession: addUserToSession,
@@ -188,5 +232,6 @@ module.exports = {
     playerReady: playerReady,
     readyRoomList: readyRoomList,
     getSessionPlayers: getSessionPlayers,
-    playerPickCard: playerPickCard
+    playerPickCard: playerPickCard,
+    playerGuessCard: playerGuessCard
 }

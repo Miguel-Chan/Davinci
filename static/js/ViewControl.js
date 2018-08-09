@@ -13,17 +13,26 @@ class RoomInfo {
   }
 }
 
+//Constant Data
 const asciiArt = '________              .__              .__  \n\
 \\______ \\ _____ ___  _|__| ____   ____ |__|\n\
  |    |  \\\\__  \\\\  \\/ /  |/    \\_/ ___\\|  |\n\
  |    `   \\/ __ \\\\   /|  |   |  \\  \\___|  |\n\
 /_______  (____  /\\_/ |__|___|  /\\___  >__|\n\
         \\/     \\/             \\/     \\/    ';
+const popularNames = ["Allison","Arthur","Ana","Alex","Arlene","Alberto","Barry","Bertha","Bill","Bonnie","Bret","Beryl","Chantal","Claudette","Charley","Cindy","Chris","Dean","Dolly","Danny","Dennis","Debby","Erin","Edouard","Erika","Earl","Emily","Ernesto","Felix","Fay","Fabian","Frances","Florence","Gustav","Grace","Gaston","Gert","Gordon","Hanna","Henri","Hermine","Harvey","Helene","Iris","Isidore","Isabel","Ivan","Irene","Isaac","Jerry","Juan","Jeanne","Jose","Joyce","Karen","Kyle","Kate","Karl","Katrina","Kirk","Lorenzo","Lili","Larry","Lisa","Lee","Leslie","Marco","Mindy","Maria","Michael","Noel","Nana","Nicole","Nate","Nadine","Olga","Omar","Odette","Otto","Ophelia","Oscar","Pablo","Paloma","Peter","Paula","Patty","Rebekah","Rene","Rose","Richard","Rita","Rafael","Sally","Sam","Shary","Stan","Sandy","Tanya","Teddy","Teresa","Tomas","Tammy","Tony","Van","Vicky","Victor","Vince","Valerie","Wendy","Wilfred","Wanda","Walter","Wilma","William","Kumiko","Aki","Miharu","Chiaki","Michiyo","Miguel","Mig","Itoe","Nanaho","Reina","Emi","Yumi","Ayumi","Kaori","Sayuri","Rie","Miyuki","Hitomi","Naoko","Miwa","Etsuko","Akane","Kazuko","Miyako","Youko","Sachiko","Mieko","Toshie","Junko"];
 
 
 let initialVue = new Vue({
   el: '#choosing-ground',
-  data: {room: '', user: '', roomsList: [], waiting: true, creating: false},
+  data: {
+    room: '',
+    user: '',
+    roomsList: [],
+    waiting: true,
+    creating: false,
+    popNames: popularNames
+  },
   created: function() {
 
   },

@@ -25,7 +25,7 @@ html(lang='en')
             button.btn.btn-primary.dropdown-toggle(data-toggle='dropdown')
               span.fa.fa-user-plus
             .dropdown-menu
-              a.dropdown-item(href='#') adfs
+              a.dropdown-item(v-for='name of popNames', v-on:click='user = name') {{ name }}
           input.form-control.button(type='text', placeholder='Name', v-model='user')
           span.input-group-text @
           input.form-control.button(type='text', placeholder='Room Number', v-model='room')
