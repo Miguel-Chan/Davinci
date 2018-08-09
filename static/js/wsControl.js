@@ -62,9 +62,26 @@ class DavinciWsController {
                     gameVue.currentActive = info.currentActive;
                     gameVue.session.remainWhite = info.whiteRemain;
                     gameVue.session.remainBlack = info.blackRemain;
+                    gameVue.picked = info.picked;
                     if (gameVue.session.state !== info.state && info.state === STATES.PLAYING) {
                         gameVue.session.state = info.state; 
                         $.bootstrapGrowl('Game Start!');
+                    } else if (gameVue.session.state === STATES.PLAYING) {
+                        $.bootstrapGrowl('Move!');
+                    }
+                    if (info.state === STATES.ENDED) {
+                        let winner = "";
+                        if (info.user.state === STATES.PLAYING) {
+                            winner = info.user.name;
+                        } else {
+                            for (let op of info.opponents) {
+                                if (op.state === STATES.PLAYING) {
+                                    winner = op.name;
+                                    break;
+                                }
+                            }
+                        }
+                        bootbox.alert('Game Over! Winner is ' + winner);
                     }
                     break;
                 case 'fail':
@@ -94,5 +111,9 @@ class DavinciWsController {
     playerPick(user, roomID, color) {
         //playerPick&&username&&roomID&&pickColor
         this.connection.send(`playerPick&&${user}&&${roomID}&&${color}`);
+    }
+    playerGuess(user, roomID, targetUser, targetIndex, guessNum) {
+        //playerGuess&&username&&roomID&&targetUser&&cardIndex&&guessNum
+        this.connection.send(`playerGuess&&${user}&&${roomID}&&${targetUser}&&${targetIndex}&&${guessNum}`);
     }
 }

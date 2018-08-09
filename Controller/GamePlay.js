@@ -61,9 +61,17 @@ module.exports = {
       this.usersInfo[newPlayer] = new UserInfo(newPlayer);
     }
 
+    get allPlayers() {
+      let res = [];
+      for (let u in this.usersInfo) {
+        res.push(this.usersInfo[u].name);
+      }
+      return res;
+    }
+
     // @param: username: the user querying the data.
     toInfoString(username) {
-      if (this.players.includes(username)) {
+      if (this.allPlayers.includes(username)) {
         let permittedData = {
           whiteRemain: this.whiteDeck.length,
           blackRemain: this.blackDeck.length,
@@ -71,6 +79,7 @@ module.exports = {
         permittedData.user = null;
         permittedData.opponents = [];
         permittedData.state = this.state;
+        permittedData.picked = this.picked;
         permittedData.currentActive = this.currentPlayer;
         for (let u in this.usersInfo) {
           let info = this.usersInfo[u];
@@ -207,6 +216,7 @@ module.exports = {
           }
         }
         if (flag) {
+          this.usersInfo[u].readyState = STATES.ENDED;
           this.players.splice(i, 1);
         }
       }

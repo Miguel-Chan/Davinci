@@ -20,7 +20,7 @@ const asciiArt = '________              .__              .__  \n\
  |    `   \\/ __ \\\\   /|  |   |  \\  \\___|  |\n\
 /_______  (____  /\\_/ |__|___|  /\\___  >__|\n\
         \\/     \\/             \\/     \\/    ';
-const popularNames = ["Allison","Arthur","Ana","Alex","Arlene","Alberto","Barry","Bertha","Bill","Bonnie","Bret","Beryl","Chantal","Claudette","Charley","Cindy","Chris","Dean","Dolly","Danny","Dennis","Debby","Erin","Edouard","Erika","Earl","Emily","Ernesto","Felix","Fay","Fabian","Frances","Florence","Gustav","Grace","Gaston","Gert","Gordon","Hanna","Henri","Hermine","Harvey","Helene","Iris","Isidore","Isabel","Ivan","Irene","Isaac","Jerry","Juan","Jeanne","Jose","Joyce","Karen","Kyle","Kate","Karl","Katrina","Kirk","Lorenzo","Lili","Larry","Lisa","Lee","Leslie","Marco","Mindy","Maria","Michael","Noel","Nana","Nicole","Nate","Nadine","Olga","Omar","Odette","Otto","Ophelia","Oscar","Pablo","Paloma","Peter","Paula","Patty","Rebekah","Rene","Rose","Richard","Rita","Rafael","Sally","Sam","Shary","Stan","Sandy","Tanya","Teddy","Teresa","Tomas","Tammy","Tony","Van","Vicky","Victor","Vince","Valerie","Wendy","Wilfred","Wanda","Walter","Wilma","William","Kumiko","Aki","Miharu","Chiaki","Michiyo","Miguel","Mig","Itoe","Nanaho","Reina","Emi","Yumi","Ayumi","Kaori","Sayuri","Rie","Miyuki","Hitomi","Naoko","Miwa","Etsuko","Akane","Kazuko","Miyako","Youko","Sachiko","Mieko","Toshie","Junko"];
+const popularNames = ["Allison","Arthur","Ana","Alex","Arlene","Alberto","Barry","Bertha","Bill","Bonnie","Bret","Beryl","Chantal","Charley","Cindy","Chris","Dean","Dolly","Danny","Dennis","Debby","Erin","Edouard","Erika","Earl","Emily","Ernesto","Felix","Fay","Fabian","Frances","Gustav","Grace","Gaston","Gert","Gordon","Hanna","Henri","Hermine","Harvey","Helene","Iris","Isidore","Isabel","Ivan","Irene","Isaac","Jerry","Juan","Jeanne","Jose","Joyce","Karen","Kyle","Kate","Karl","Katrina","Kirk","Lorenzo","Lili","Larry","Lisa","Lee","Leslie","Marco","Mindy","Maria","Michael","Noel","Nana","Nicole","Nate","Nadine","Olga","Omar","Odette","Otto","Ophelia","Oscar","Pablo","Paloma","Peter","Paula","Patty","Rebekah","Rene","Rose","Richard","Rita","Rafael","Sally","Sam","Shary","Stan","Sandy","Tanya","Teddy","Teresa","Tomas","Tammy","Tony","Van","Vicky","Victor","Vince","Valerie","Wendy","Wilfred","Wanda","Walter","Wilma","William","Kumiko","Aki","Miharu","Chiaki","Michiyo","Miguel","Mig","Itoe","Nanaho","Reina","Emi","Yumi","Ayumi","Kaori","Sayuri","Rie","Miyuki","Hitomi","Naoko","Miwa","Etsuko","Akane","Kazuko","Miyako","Youko","Sachiko","Mieko","Toshie","Junko"]
 
 
 let initialVue = new Vue({
@@ -109,7 +109,8 @@ let gameVue = new Vue({
     session: null,
     user: null,
     room: null,
-    currentActive: null
+    currentActive: null,
+    picked: false
   },
   computed: {
     hasStarted: function() {
@@ -165,12 +166,72 @@ let gameVue = new Vue({
         bootbox.alert('The game has not yet started!');
       } else if (this.session.user.name !== this.currentActive) {
         $.bootstrapGrowl('It\'s not your turn!');
+      } else if (this.picked) {
+        $.bootstrapGrowl('You have already picked a remaining card!');
       } else {
         WsControl.playerPick(this.user, this.room, color);
       }
+    },
+    makeGuess(targetUser, cardIndex) {
+      if (this.session.state !== STATES.PLAYING) {
+        bootbox.alert('The game has not yet started!');
+        return;
+      } else if (this.session.user.name !== this.currentActive) {
+        $.bootstrapGrowl('It\'s not your turn!');
+        return;
+      } else if (!this.picked) {
+        $.bootstrapGrowl('You should first picked a remaining card!');
+        return;
+      }
+      let targetCard = targetUser.cards[cardIndex];
+      if (targetCard.content.indexOf("<") === -1) {
+        $.bootstrapGrowl('This card has already been uncovered!');
+        return;
+      }
+      //Find possible card num
+      let possibleSet = cardSet.slice();
+      //Rules out all user's card.
+      for (let card of this.session.user.cards) {
+        if (card.color === targetCard.color) {
+          let content = card.content;
+          content = content.replace(/[<?]+/, "");
+          possibleSet.splice(possibleSet.indexOf(content), 1);
+        }
+      }
+      //Rules out all opponents' known cards.
+      for (let n in this.session.players) {
+        let op = this.session.players[n];
+        for (let card of op.cards) {
+          if (card.color === targetCard.color && card.content !== "<") {
+            possibleSet.splice(possibleSet.indexOf(card.content), 1);
+          }
+        }
+      }
+      let options = makeOptionsObj(possibleSet);
+      bootbox.prompt({
+        title: 'Choose your guess.',
+        inputType: 'select',
+        inputOptions: options,
+        callback: function(res) {
+          if (res) {
+            WsControl.playerGuess(gameVue.user, gameVue.room, targetUser.name, cardIndex, res);
+          }
+        }
+      })
     }
   }
 })
+
+function makeOptionsObj(data) {
+  let res = [];
+  for (let ele of data) {
+    res.push({
+      text: ele,
+      value: ele
+    });
+  }
+  return res;
+}
 
 function startGame() {
   initialVue.waiting = false;

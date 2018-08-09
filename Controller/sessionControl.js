@@ -72,7 +72,7 @@ function addUserToSession(user, sessionID) {
 
 function getRoomInfo(user, sessionID) {
     if (sessionID in sessionList) {
-        if (sessionList[sessionID].players.includes(user)) {
+        if (getSessionPlayers(sessionID).includes(user)) {
             let target = sessionList[sessionID];
             let infoJSON = target.toInfoString(user);
             return {
@@ -136,7 +136,11 @@ function playerReady(user, sessionID) {
 
 function getSessionPlayers(sessID) {
     let sess = sessionList[sessID];
-    return sess.players;
+    let res = [];
+    for (let u in sess.usersInfo) {
+        res.push(sess.usersInfo[u].name);
+    }
+    return res;
 }
 
 function playerPickCard(username, roomID, color) {
@@ -185,7 +189,7 @@ function playerGuessCard(username, roomID, targetUser, cardIndex, guessNum) {
     if (roomID in sessionList) {
         let targetSess = sessionList[roomID];
         if (targetSess.players.includes(username)) {
-            if (targetSess.currentPlayer !== username) {
+            if (targetSess.currentPlayer === username) {
                 if (targetSess.players.includes(targetUser)) {
                     if (targetSess.usersInfo[targetUser].cards.length <= cardIndex) {
                         return  {
@@ -199,6 +203,7 @@ function playerGuessCard(username, roomID, targetUser, cardIndex, guessNum) {
                         };
                     }
                     targetSess.guessCard(username, targetUser, cardIndex, guessNum);
+                    return {code: 1};
                 } else {
                     return {
                         code: 0,

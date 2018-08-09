@@ -57,8 +57,8 @@ html(lang='en')
             span.fa.fa-user-circle
             p {{ oppo.name }}
           .opponent-card-box(v-if='oppo.cards.length !== 0')
-            .card-btn-area(v-for='card of oppo.cards')
-              button.btn.card-btn(v-bind:class="card.toBootstrapClass()") {{ card.content }}
+            .card-btn-area(v-for='(card,index) of oppo.cards')
+              button.btn.card-btn(v-bind:class="card.toBootstrapClass()", v-on:click="makeGuess(oppo, index)") {{ card.content }}
       div(id='player-area')
         div.list-group-item.player-list
           .player-info-box(v-bind:class="{'player-inactive': !isActive(session.user.name)}")
