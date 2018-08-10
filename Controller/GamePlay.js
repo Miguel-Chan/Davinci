@@ -245,6 +245,21 @@ module.exports = {
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
       }
     }
+
+    swapCard(username, index) {
+      index = parseInt(index);
+      if (this.usersInfo[username].cards.length - 1 <= index) {
+        return;
+      }
+      let leftCard = this.usersInfo[username].cards[index];
+      let rightCard = this.usersInfo[username].cards[index+1];
+      if (leftCard.num === '-' || rightCard.num === '-' || 
+          (parseInt(leftCard.num) >= parseInt(rightCard.num))) {
+            let deck = this.usersInfo[username].cards;
+            [deck[index], deck[index+1]] = [deck[index+1], deck[index]];
+          }
+    }
   },
+
   STATES: STATES
 }

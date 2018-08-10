@@ -86,6 +86,7 @@ wsServer.on('request', function(request) {
         let retVal = null;
         let retStr = "";
         let roomID = "";
+        let username = "";
         switch(instructions[0].toLocaleLowerCase()) {
             //getNewRoom
             case 'getnewroom':
@@ -154,12 +155,24 @@ wsServer.on('request', function(request) {
                 break;
             //playerGuess&&username&&roomID&&targetUser&&cardIndex&&guessNum
             case 'playerguess':
-                let username = instructions[1];
+                username = instructions[1];
                 roomID = instructions[2];
                 let targetUser = instructions[3];
                 let targetCardIndex = instructions[4];
                 let guessNum = instructions[5];
                 retVal = sessionControl.playerGuessCard(username, roomID, targetUser, targetCardIndex, guessNum);
+                if (retVal.code === 1) {
+                    roomBroadcastInfo(roomID);
+                } else {
+                    sendBack(conn, `Fail||${retVal.errMsg}`);
+                }
+                break;
+            //swapCard&&username&&roomID&&cardIndex
+            case 'swapcard':
+                username = instructions[1];
+                roomID = instructions[2];
+                let cardIndex = instructions[3];
+                retVal = sessionControl.playerSwapCard(username, roomID, cardIndex);
                 if (retVal.code === 1) {
                     roomBroadcastInfo(roomID);
                 } else {

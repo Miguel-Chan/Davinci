@@ -15,6 +15,7 @@ class DavinciWsController {
         this.connection.onerror = function() {
             bootbox.alert("Connection Error! Please reconnect by flushing the page.");
         }
+        this.prevMsg = "";
         this.connection.onmessage = function(recData) {
             let msg = recData.data;
             let data = msg.split("||");
@@ -66,8 +67,9 @@ class DavinciWsController {
                     if (gameVue.session.state !== info.state && info.state === STATES.PLAYING) {
                         gameVue.session.state = info.state; 
                         $.bootstrapGrowl('Game Start!');
-                    } else if (gameVue.session.state === STATES.PLAYING) {
+                    } else if (gameVue.session.state === STATES.PLAYING && data[1] !== this.prevMsg) {
                         $.bootstrapGrowl('Move!');
+                        this.prevMsg = data[1];
                     }
                     if (info.state === STATES.ENDED) {
                         let winner = "";
@@ -115,5 +117,9 @@ class DavinciWsController {
     playerGuess(user, roomID, targetUser, targetIndex, guessNum) {
         //playerGuess&&username&&roomID&&targetUser&&cardIndex&&guessNum
         this.connection.send(`playerGuess&&${user}&&${roomID}&&${targetUser}&&${targetIndex}&&${guessNum}`);
+    }
+    swapCard(user, roomID, index) {
+        //swapCard&&username&&roomID&&cardIndex
+        this.connection.send(`swapCard&&${user}&&${roomID}&&${index}`);
     }
 }

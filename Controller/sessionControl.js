@@ -230,6 +230,24 @@ function playerGuessCard(username, roomID, targetUser, cardIndex, guessNum) {
     }
 }
 
+function playerSwapCard(user, roomID, index) {
+    if (!(roomID in sessionList)) {
+        return {
+            code: 0,
+            errMsg: 'Session does not exist!'
+        };
+    }
+    let targetSess = sessionList[roomID];
+    if (!targetSess.players.includes(user)) {
+        return {
+            code: 0,
+            errMsg: 'User is not in the requested session!'
+        };
+    }
+    targetSess.swapCard(user, index);
+    return { code: 1 };
+}
+
 module.exports = {
     createNewRoom: getNewRoom,
     addUserToSession: addUserToSession,
@@ -238,5 +256,6 @@ module.exports = {
     readyRoomList: readyRoomList,
     getSessionPlayers: getSessionPlayers,
     playerPickCard: playerPickCard,
-    playerGuessCard: playerGuessCard
+    playerGuessCard: playerGuessCard,
+    playerSwapCard: playerSwapCard
 }

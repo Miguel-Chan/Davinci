@@ -28,3 +28,7 @@ cmd:playerPick&&username&&roomID&&pickColor
 res:roomInfo||{roomInfoJSON}
     Fail||{msg}
 
+cmd:swapCard&&username&&roomID&&cardIndex
+res:roomInfo||{roomInfoJSON}
+    Fail||{msg}
+

@@ -96,7 +96,6 @@ let initialVue = new Vue({
         bootbox.alert('Username should not be longer than 7 characters.');
         return;
       }
-      // TODO: Check if the room exists.
       WsControl.joinRoom(this.user, this.room);
     }
   }
@@ -149,7 +148,7 @@ let gameVue = new Vue({
       } else if (clickedCardIndex < 0 || clickedCardIndex >= cards.length) {
         bootbox.alert('Error: clicked card not found!');
       } else {
-        // TODO: Swap Card position
+        WsControl.swapCard(this.user, this.room, clickedCardIndex);
       }
     },
     setPlayerReady(username) {
