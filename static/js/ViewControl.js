@@ -1,6 +1,10 @@
 let WsControl;
-$(document).ready(function() {
-  WsControl.getRoomList();
+$(document).ready(function initList() {
+  try {
+    WsControl.getRoomList();
+  } catch(any) {
+    setTimeout(initList, 500);
+  }
 })
 
 WsControl = new DavinciWsController();
